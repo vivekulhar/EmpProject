@@ -1,16 +1,15 @@
 package dev.vivek.EmpProject.services;
 
-import dev.vivek.EmpProject.dtos.CreateEmployeeRequestDto;
-import dev.vivek.EmpProject.dtos.EmployeeDTO;
-import dev.vivek.EmpProject.dtos.MappingClass;
-import dev.vivek.EmpProject.dtos.ProjectDto;
+import dev.vivek.EmpProject.dtos.*;
 import dev.vivek.EmpProject.models.Employee;
 import dev.vivek.EmpProject.models.Project;
 import dev.vivek.EmpProject.repositories.EmployeeRepository;
 import dev.vivek.EmpProject.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -68,27 +67,20 @@ public class EmployeeService {
         return projectDto;
     }
 
-    public ProjectDto assignEmployeeToProject(Integer projId) {
+    public ProjectDto assignEmployeeToProject(AssignEmployeeToProjectDto requestDto, Integer projId) {
         System.out.println("\nFetch existing Employee details and assign them to an existing Project." + "\n");
-
-        // get first Employee
-        int emplId = 1;
-        Employee employee1 = this.employeeRepository.getReferenceById(emplId);
-        System.out.println("\nEmployee details :: " + employee1.toString() + "\n");
-
-        // get first Employee
-        emplId = 8;
-        Employee employee2 = this.employeeRepository.getReferenceById(emplId);
-        System.out.println("\nEmployee details :: " + employee2.toString() + "\n");
+        // create Employee set
+        Set<Employee> employees = new HashSet<>();
+        for(Integer emplId:requestDto.getEmpId()){
+            // get first Employee
+            Employee employee1 = this.employeeRepository.getReferenceById(emplId);
+            System.out.println("\nEmployee details :: " + employee1.toString() + "\n");
+            employees.add(employee1);
+        }
 
         // get a Project
         Project project = this.projectRepository.getReferenceById(projId);
         System.out.println("\nProject details :: " + project.toString() + "\n");
-
-        // create Employee set
-        Set<Employee> employees = new HashSet<>();
-        employees.add(employee1);
-        employees.add(employee2);
 
         // assign Employee Set to Project
         project.setEmployees(employees);
@@ -109,9 +101,22 @@ public class EmployeeService {
         Employee employee = this.employeeRepository.getReferenceById(empId);
         System.out.println("\nEmployee details :: " + employee.toString() + "\n");
         System.out.println("\nProject details :: " + employee.getProjects() + "\n");
+        Set<Project> projectDtoList = employee.getProjects();
+        List<ProjectDto> projectDtos = new ArrayList<>();
+
+
+        for (Project project : projectDtoList) {
+            ProjectDto projectDto = mappingClass.mapProjectToDTO2(project);
+            projectDtos.add(projectDto);
+        }
+
         employee.setProjects(employee.getProjects());
         System.out.println("Done!!!" + "\n");
 
-        return mappingClass.mapEmployeeToDTO(employee);
+        EmployeeDTO employeeDTO =  mappingClass.mapEmployeeToDTO(employee);
+
+        employeeDTO.setProjects(projectDtos);
+
+        return employeeDTO;
     }
 }

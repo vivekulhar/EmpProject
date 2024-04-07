@@ -1,21 +1,15 @@
 package dev.vivek.EmpProject.controllers;
 
+import dev.vivek.EmpProject.dtos.AssignEmployeeToProjectDto;
 import dev.vivek.EmpProject.dtos.CreateEmployeeRequestDto;
 import dev.vivek.EmpProject.dtos.EmployeeDTO;
 import dev.vivek.EmpProject.dtos.ProjectDto;
-import dev.vivek.EmpProject.models.Employee;
-import dev.vivek.EmpProject.models.Project;
-import dev.vivek.EmpProject.repositories.EmployeeRepository;
-import dev.vivek.EmpProject.repositories.ProjectRepository;
 import dev.vivek.EmpProject.services.EmployeeService;
 import dev.vivek.EmpProject.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/employee")
@@ -49,8 +43,8 @@ public class EmployeeController {
     }
 
     @PostMapping(value = "/assignEmployeeToProject/{projId}")
-    public ResponseEntity<ProjectDto> assignEmployeeToProject(@PathVariable(name = "projId") Integer projId) {
-        ProjectDto project = employeeService.assignEmployeeToProject(projId);
+    public ResponseEntity<ProjectDto> assignEmployeeToProject(@RequestBody AssignEmployeeToProjectDto requestDto, @PathVariable(name = "projId") Integer projId) {
+        ProjectDto project = employeeService.assignEmployeeToProject(requestDto, projId);
 
         return new ResponseEntity<>(project,HttpStatus.OK);
     }

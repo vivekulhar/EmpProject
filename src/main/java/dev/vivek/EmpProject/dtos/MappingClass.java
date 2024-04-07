@@ -29,4 +29,15 @@ public class MappingClass {
         projectDto.setEmployees(employeeDTOs); // or set to null
         return projectDto;
     }
+
+    public ProjectDto mapProjectToDTO2(Project project) {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(project.getId());
+        projectDto.setProjectName(project.getProjectName());
+        projectDto.setTechnologyUsed(project.getTechnologyUsed());
+        // Since we are not loading employees here, we can set employees to null or an empty list
+
+
+        return projectDto;
+    }
 }
